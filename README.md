@@ -1,0 +1,82 @@
+# Lumi 🌸
+
+**Tu espacio para estudiar, organizarte y sentirte mejor.**
+
+PWA de productividad universitaria y bienestar personal construida con Next.js (App Router), TypeScript, Tailwind CSS y Firebase.
+
+## Funcionalidades incluidas en esta base
+
+- ✅ Autenticación (registro / login / cerrar sesión) con Firebase Auth
+- ✅ Dashboard con saludo, frase del día, resumen de tareas, mini calendario y estadísticas
+- ✅ Sistema de tareas (CRUD, prioridades, fecha/hora, completar, duplicar, eliminar)
+- ✅ Calendario mensual/semanal (FullCalendar) con tareas y eventos
+- ✅ Módulo universidad (cursos y profesores)
+- ✅ Diario personal con estado de ánimo
+- ✅ Notas rápidas estilo Google Keep (con anclado y colores)
+- ✅ Asistente/chatbot motivador (motor de reglas local, listo para conectar una IA real)
+- ✅ Sección relax: Pomodoro, respiración guiada, sonidos ambientales
+- ✅ Objetivos por periodo (diaria/semanal/mensual/anual)
+- ✅ Ajustes de perfil y activación de notificaciones
+- ✅ Base de notificaciones push reales (Firebase Cloud Messaging)
+- ✅ Configurado como PWA instalable (`next-pwa` + manifest)
+- ✅ Sistema de diseño con paleta pastel (lavanda, rosa, menta, azul bebé, crema) y estilo glassmorphism
+
+## Lo que falta que tú completes (por licencias / credenciales, no por límite técnico)
+
+1. **Tu proyecto de Firebase**: crea uno en https://console.firebase.google.com, activa Authentication (Email/Password), Firestore y Cloud Messaging.
+2. Copia `.env.example` a `.env.local` y completa las claves de tu proyecto Firebase.
+3. Reemplaza la config de ejemplo en `public/firebase-messaging-sw.js` con la de tu proyecto (los service workers no leen variables de entorno).
+4. Agrega tus propios íconos en `public/icons/icon-192.png` y `icon-512.png`.
+5. Agrega archivos de audio libres de derechos en `public/sounds/` (rain.mp3, ocean.mp3, forest.mp3, night.mp3, fireplace.mp3) para la sección Relax.
+6. Configura las reglas de seguridad de Firestore (por ahora no están incluidas — usa reglas que exijan `request.auth.uid == resource.data.userId`).
+
+## Instalación local
+
+```bash
+npm install
+cp .env.example .env.local   # y completa tus credenciales de Firebase
+
+```
+
+Abre http://localhost:3000
+
+## Subir a GitHub
+
+```bash
+git init
+git add .
+git commit -m "Lumi: base inicial del proyecto"
+git branch -M main
+git remote add origin https://github.com/TU_USUARIO/lumi.git
+git push -u origin main
+```
+
+## Desplegar en Vercel
+
+1. Entra a https://vercel.com/new e importa el repo de GitHub.
+2. En "Environment Variables" agrega las mismas variables de tu `.env.local`.
+3. Deploy 🚀
+
+## Estructura del proyecto
+
+```
+src/
+  app/           → páginas (App Router): dashboard, tasks, calendar, university,
+                   diary, notes, chat, relax, goals, settings, login, register
+  components/    → componentes por dominio (ui, layout, dashboard, tasks, etc.)
+  services/      → acceso a datos (Firestore) y capa de IA (services/ai)
+  store/         → estado global con Zustand
+  contexts/      → AuthContext
+  hooks/         → hooks de sincronización con Firestore y notificaciones
+  types/         → tipos TypeScript compartidos
+  data/          → banco de frases motivacionales
+  lib/           → configuración de Firebase y utilidades
+```
+
+## Próximos pasos sugeridos
+
+- Vistas Kanban y semanal/mensual completas para tareas (ahora mismo la vista principal es lista; la base de datos y el store ya soportan las demás vistas).
+- Subtareas, etiquetas, archivos y links dentro del formulario de tareas (los tipos ya están listos, falta la UI).
+- Conectar un proveedor de IA real en `services/ai/` (solo hay que crear una clase que implemente `AIProvider`).
+- Modo oscuro (las variables de color ya están centralizadas en `tailwind.config.ts` para facilitarlo).
+- Reglas de seguridad de Firestore y de Storage.

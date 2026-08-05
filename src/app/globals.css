@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "Quicksand", ui-sans-serif, system-ui;
+  --font-display: "Fredoka", ui-sans-serif, system-ui;
+}
+
+body {
+  background: linear-gradient(180deg, #FFF9EE 0%, #F5F3FF 40%, #FFF4F8 100%);
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: #D9CCFF; border-radius: 999px; }

@@ -52,7 +52,7 @@ export function ChatWindow() {
             <div
               className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm ${
                 m.role === "user"
-                  ? "bg-gradient-to-br from-lavender-400 to-blush-400 text-white"
+                  ? "bg-accent-gradient text-white"
                   : "bg-lavender-50 text-gray-700"
               }`}
             >

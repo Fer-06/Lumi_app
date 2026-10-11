@@ -14,3 +14,12 @@ body {
 
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-thumb { background: #D9CCFF; border-radius: 999px; }
+
+:root {
+  --accent-from: #C2AEFF;
+  --accent-to: #FFA9CB;
+}
+
+.bg-accent-gradient {
+  background-image: linear-gradient(to bottom right, var(--accent-from), var(--accent-to));
+}

@@ -36,7 +36,7 @@ export default function DashboardPage() {
 
       <button
         onClick={openTaskModal}
-        className="fixed bottom-24 right-5 z-30 rounded-full bg-gradient-to-br from-lavender-400 to-blush-400 p-4 text-white shadow-glass lg:bottom-8 lg:right-8"
+        className="fixed bottom-24 right-5 z-30 rounded-full bg-accent-gradient p-4 text-white shadow-glass lg:bottom-8 lg:right-8"
       >
         <Plus size={22} />
       </button>

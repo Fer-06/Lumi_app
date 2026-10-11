@@ -18,7 +18,7 @@ export function Button({
 }: ButtonProps) {
   const variants = {
     primary:
-      "bg-gradient-to-br from-lavender-400 to-blush-400 text-white shadow-soft hover:shadow-glass",
+      "bg-accent-gradient text-white shadow-soft hover:shadow-glass",
     secondary:
       "bg-white/70 text-lavender-600 border border-lavender-200 hover:bg-white",
     ghost: "bg-transparent text-lavender-600 hover:bg-lavender-50",

@@ -33,7 +33,7 @@ export default function TasksPage() {
         />
         <button
           onClick={openTaskModal}
-          className="rounded-full bg-gradient-to-br from-lavender-400 to-blush-400 p-2.5 text-white shadow-soft"
+          className="rounded-full bg-accent-gradient p-2.5 text-white shadow-soft"
         >
           <Plus size={18} />
         </button>

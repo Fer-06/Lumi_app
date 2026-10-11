@@ -9,6 +9,7 @@ import { saveUserProfile, logoutUser } from "@/services/auth.service";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { THEME_OPTIONS } from "@/lib/theme";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function SettingsPage() {
   const { requestPermission } = useNotifications();
   const [name, setName] = useState(profile?.name ?? "");
   const [message, setMessage] = useState("");
+  const [themeColor, setThemeColor] = useState(profile?.themeColor ?? THEME_OPTIONS[0].id);
 
   useEffect(() => {
     if (profile?.name) {
@@ -37,6 +39,16 @@ export default function SettingsPage() {
     } catch {
       setMessage("No se pudieron guardar los cambios. Intenta otra vez.");
     }
+  };
+
+  const chooseTheme = async (id: string) => {
+  setThemeColor(id);
+  if (!profile) return;
+  try {
+    await saveUserProfile(profile.uid, { themeColor: id });
+  } catch (err) {
+    console.error("Error al guardar el color:", err);
+  }
   };
 
   const enableNotifications = async () => {
@@ -70,6 +82,20 @@ export default function SettingsPage() {
         <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Tu nombre" />
         <Button onClick={save}>Guardar cambios</Button>
         {message && <p className="text-xs text-gray-500">{message}</p>}
+        <hr className="border-lavender-100" />
+          <p className="font-display text-gray-700">Color de Lumi</p>
+          <div className="flex flex-wrap gap-3">
+            {THEME_OPTIONS.map((t) => (
+              <button
+                key={t.id}
+                onClick={() => chooseTheme(t.id)}
+                className={`h-10 w-10 rounded-full border-2 transition ${themeColor === t.id ? "border-gray-700 scale-110" : "border-white"}`}
+                style={{ background: `linear-gradient(to bottom right, ${t.from}, ${t.to})` }}
+                title={t.label}
+                aria-label={t.label}
+              />
+            ))}
+          </div>
         <hr className="border-lavender-100" />
         <Button variant="secondary" onClick={enableNotifications}>Activar notificaciones</Button>
         <Button variant="ghost" onClick={handleLogout}>Cerrar sesión</Button>

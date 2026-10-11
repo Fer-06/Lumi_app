@@ -28,7 +28,7 @@ export function Sidebar() {
   return (
     <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:shrink-0 border-r border-lavender-100 bg-white/50 backdrop-blur-glass p-5">
       <div className="mb-8 flex items-center gap-2 px-2">
-        <div className="h-9 w-9 rounded-2xl bg-gradient-to-br from-lavender-400 to-blush-400 shadow-soft" />
+        <div className="h-9 w-9 rounded-2xl bg-accent-gradient shadow-soft" />
         <div>
           <p className="font-display text-lg leading-none text-gray-800">Lumi</p>
           <p className="text-xs text-gray-400">tu espacio ✨</p>

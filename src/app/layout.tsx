@@ -3,6 +3,8 @@ import { Quicksand, Fredoka } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AppShell } from "@/components/layout/AppShell";
+import { ThemeStyleInjector } from "@/components/theme/ThemeStyleInjector";
+import { Mascot } from "@/components/mascot/Mascot";
 
 const quicksand = Quicksand({ subsets: ["latin"], variable: "--font-sans" });
 const fredoka = Fredoka({ subsets: ["latin"], variable: "--font-display" });
@@ -23,6 +25,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${quicksand.variable} ${fredoka.variable} font-sans`}>
         <AuthProvider>
           <AppShell>{children}</AppShell>
+          <ThemeStyleInjector />
+          <Mascot />
         </AuthProvider>
       </body>
     </html>

@@ -7,8 +7,10 @@ import { aiProvider } from "@/services/ai";
 import { generateId } from "@/lib/utils";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export function ChatWindow() {
+  const gender = useAuthStore((state) => state.profile?.gender ?? "neutral");
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "welcome",
@@ -19,29 +21,43 @@ export function ChatWindow() {
   ]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
+  const [error, setError] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
+  const welcomeText = gender === "femenino"
+    ? "Hola, soy Lumi 🌸 Estoy aquí para escucharte y ayudarte a organizarte. ¿Cómo te sientes hoy?"
+    : gender === "masculino"
+      ? "Hola, soy Lumi 🌸 Estoy aquí para escucharte y ayudarte a organizarte. ¿Cómo te sientes hoy?"
+      : "Hola, soy Lumi 🌸 Estoy aquí para escucharte, pensar contigo y ayudarte a organizarte. ¿Cómo va tu día?";
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typing]);
 
   const send = async () => {
-    if (!input.trim()) return;
-    const userMsg: ChatMessage = { id: generateId(), role: "user", text: input, createdAt: new Date().toISOString() };
+    const text = input.trim();
+    if (!text || typing) return;
+    const userMsg: ChatMessage = { id: generateId(), role: "user", text, createdAt: new Date().toISOString() };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
+    setError("");
     setTyping(true);
 
-    const reply = await aiProvider.getResponse(
-      userMsg.text,
-      messages.map((m) => ({ role: m.role, text: m.text })),
-    );
-
-    setMessages((prev) => [
-      ...prev,
-      { id: generateId(), role: "assistant", text: reply, createdAt: new Date().toISOString() },
-    ]);
-    setTyping(false);
+    try {
+      const reply = await aiProvider.getResponse(
+        userMsg.text,
+        messages.map((message) => ({ role: message.role, text: message.text })),
+        gender,
+      );
+      setMessages((prev) => [
+        ...prev,
+        { id: generateId(), role: "assistant", text: reply, createdAt: new Date().toISOString() },
+      ]);
+    } catch (sendError) {
+      console.error("No se pudo generar una respuesta de Lumi:", sendError);
+      setError(sendError instanceof Error ? sendError.message : "No pude preparar una respuesta ahora. Inténtalo otra vez.");
+    } finally {
+      setTyping(false);
+    }
   };
 
   return (
@@ -56,11 +72,12 @@ export function ChatWindow() {
                   : "bg-lavender-50 text-gray-700"
               }`}
             >
-              {m.text}
+              {m.id === "welcome" ? welcomeText : m.text}
             </div>
           </div>
         ))}
         {typing && <p className="text-xs text-gray-400">Lumi está escribiendo...</p>}
+        {error && <p className="text-xs text-blush-500" role="alert">{error}</p>}
         <div ref={endRef} />
       </div>
       <div className="flex gap-2 border-t border-lavender-100 p-3">
@@ -69,8 +86,9 @@ export function ChatWindow() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && send()}
+          disabled={typing}
         />
-        <Button onClick={send}><Send size={16} /></Button>
+        <Button onClick={send} disabled={typing || !input.trim()} aria-label="Enviar mensaje"><Send size={16} /></Button>
       </div>
     </div>
   );

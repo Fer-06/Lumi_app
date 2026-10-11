@@ -8,12 +8,14 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { getRegistrationErrorMessage, registerUser } from "@/services/auth.service";
+import { Gender } from "@/types";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [gender, setGender] = useState<Gender>("neutral");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -24,7 +26,7 @@ export default function RegisterPage() {
     setIsSubmitting(true);
 
     try {
-      await registerUser(name, email, password);
+      await registerUser(name, email, password, gender);
       router.push("/");
     } catch (err) {
       console.error("Error al crear la cuenta:", err);
@@ -52,6 +54,19 @@ export default function RegisterPage() {
           <Input placeholder="Tu nombre" value={name} onChange={(e) => setName(e.target.value)} required />
           <Input type="email" placeholder="Correo Gmail o institucional" value={email} onChange={(e) => setEmail(e.target.value)} required />
           <Input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+          <select
+            value={gender}
+            onChange={(e) => {
+              const value = e.target.value;
+              setGender(value === "femenino" || value === "masculino" ? value : "neutral");
+            }}
+            className="rounded-xl border border-lavender-200 bg-white/80 px-3 py-2.5 text-sm text-gray-600"
+            aria-label="Cómo quieres que Lumi se dirija a ti"
+          >
+            <option value="neutral">Prefiero lenguaje neutral</option>
+            <option value="femenino">Femenino</option>
+            <option value="masculino">Masculino</option>
+          </select>
           {error && <p className="rounded-lg bg-blush-50 px-3 py-2 text-xs text-blush-500" role="alert">{error}</p>}
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Creando cuenta..." : "Crear cuenta"}

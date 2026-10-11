@@ -14,7 +14,7 @@ export function QuoteCard() {
   const now = useNow();
   const today = useTodayISO();
   const profile = useAuthStore((s) => s.profile);
-  const quote = getQuoteForDate(now);
+  const quote = getQuoteForDate(now, [], profile?.gender);
 
   useEffect(() => {
     if (!profile) return;

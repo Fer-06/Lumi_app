@@ -29,11 +29,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             uid: user.uid,
             name: user.displayName ?? "",
             email: user.email ?? "",
+            gender: "neutral",
             notificationsEnabled: false,
             language: "es",
           };
           await setDoc(doc(db, "users", user.uid), newProfile, { merge: true });
           profile = newProfile;
+        } else if (!profile.gender) {
+          profile = { ...profile, gender: "neutral" };
+          try {
+            await setDoc(doc(db, "users", user.uid), { gender: "neutral" }, { merge: true });
+          } catch (error) {
+            console.error("No se pudo guardar el lenguaje neutral predeterminado:", error);
+          }
         }
 
         setProfile(profile);
@@ -44,6 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             uid: user.uid,
             name: user.displayName ?? "",
             email: user.email ?? "",
+            gender: "neutral",
             notificationsEnabled: false,
             language: "es",
           });

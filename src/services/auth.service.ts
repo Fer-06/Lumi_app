@@ -5,7 +5,7 @@ import {
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
-import { UserProfile } from "@/types";
+import { Gender, UserProfile } from "@/types";
 
 export class RegistrationProfileError extends Error {
   constructor() {
@@ -49,7 +49,7 @@ export function getRegistrationErrorMessage(error: unknown) {
   }
 }
 
-export async function registerUser(name: string, email: string, password: string) {
+export async function registerUser(name: string, email: string, password: string, gender: Gender) {
   const normalizedName = name.trim();
   const normalizedEmail = email.trim().toLowerCase();
   const cred = await createUserWithEmailAndPassword(auth, normalizedEmail, password);
@@ -57,6 +57,7 @@ export async function registerUser(name: string, email: string, password: string
     uid: cred.user.uid,
     name: normalizedName,
     email: normalizedEmail,
+    gender,
     notificationsEnabled: false,
     language: "es",
   };

@@ -113,6 +113,8 @@ export type QuoteCategory =
 export interface Quote {
   id: string;
   text: string;
+  masculineText?: string;
+  neutralText?: string;
   category: QuoteCategory;
 }
 
@@ -135,12 +137,15 @@ export interface ChatMessage {
   createdAt: string;
 }
 
+export type Gender = "femenino" | "masculino" | "neutral";
+
 export interface UserProfile {
   uid: string;
   name: string;
   email: string;
   avatarUrl?: string;
   themeColor?: string;
+  gender?: Gender;
   notificationsEnabled: boolean;
   language: "es" | "en";
 }

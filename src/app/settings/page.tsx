@@ -10,6 +10,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { applyTheme, DEFAULT_THEME_ID, getThemeOverrideKey, THEME_OPTIONS } from "@/lib/theme";
+import { Gender } from "@/types";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function SettingsPage() {
   const [name, setName] = useState(profile?.name ?? "");
   const [message, setMessage] = useState("");
   const [themeColor, setThemeColor] = useState(profile?.themeColor ?? THEME_OPTIONS[0].id);
+  const [gender, setGender] = useState<Gender>(profile?.gender ?? "neutral");
 
   useEffect(() => {
     if (profile?.name) {
@@ -29,6 +31,10 @@ export default function SettingsPage() {
     const guestTheme = profile ? null : window.localStorage.getItem("lumi-theme");
     setThemeColor(override ?? guestTheme ?? profile?.themeColor ?? DEFAULT_THEME_ID);
   }, [profile]);
+
+  useEffect(() => {
+    setGender(profile?.gender ?? "neutral");
+  }, [profile?.gender]);
 
   const save = async () => {
     if (!profile) {
@@ -60,6 +66,19 @@ export default function SettingsPage() {
       setMessage("Color actualizado y guardado.");
     } catch {
       setMessage("El color quedó aplicado en este dispositivo, pero no se pudo sincronizar con tu cuenta.");
+    }
+  };
+
+  const saveGender = async (value: Gender) => {
+    setGender(value);
+    if (!profile) return;
+
+    try {
+      await saveUserProfile(profile.uid, { gender: value });
+      setProfile({ ...profile, gender: value });
+      setMessage("Preferencia de lenguaje guardada.");
+    } catch {
+      setMessage("No se pudo guardar tu preferencia. Intenta otra vez.");
     }
   };
 
@@ -117,6 +136,24 @@ export default function SettingsPage() {
         <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Tu nombre" />
         <Button onClick={save}>Guardar cambios</Button>
         {message && <p className="text-xs text-gray-500">{message}</p>}
+        <hr className="border-lavender-100" />
+        <label htmlFor="profile-gender" className="font-display text-gray-700">
+          Cómo quieres que Lumi se dirija a ti
+        </label>
+        <select
+          id="profile-gender"
+          value={gender}
+          onChange={(event) => {
+            const value = event.target.value;
+            void saveGender(value === "femenino" || value === "masculino" ? value : "neutral");
+          }}
+          className="rounded-xl border border-lavender-200 bg-white/80 px-3 py-2.5 text-sm text-gray-600"
+          disabled={loading}
+        >
+          <option value="neutral">Lenguaje neutral</option>
+          <option value="femenino">Femenino</option>
+          <option value="masculino">Masculino</option>
+        </select>
         <hr className="border-lavender-100" />
           <p className="font-display text-gray-700">Color de Lumi</p>
           <div className="flex flex-wrap gap-3">

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { ErrorText } from "@/components/ui/ErrorText";
 import { createEvent } from "@/services/events.service";
 import { useAuthStore } from "@/store/useAuthStore";
-import { EventCategory } from "@/types";
+import { EventCategory, ReminderOffset } from "@/types";
 
 const categories: { value: EventCategory; label: string; color: string }[] = [
   { value: "recordatorio", label: "Notita 💌", color: "#C2AEFF" },
@@ -24,6 +24,8 @@ export function EventForm({ defaultDate, onSaved }: { defaultDate: string; onSav
   const profile = useAuthStore((s) => s.profile);
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(defaultDate);
+  const [time, setTime] = useState("09:00");
+  const [reminder, setReminder] = useState<ReminderOffset>("1h");
   const [category, setCategory] = useState<EventCategory>("recordatorio");
   const [notes, setNotes] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -45,11 +47,15 @@ export function EventForm({ defaultDate, onSaved }: { defaultDate: string; onSav
         title,
         category,
         date,
+        time,
+        reminder,
         color: chosen.color,
         notes,
       });
       setTitle("");
       setNotes("");
+      setTime("09:00");
+      setReminder("1h");
       onSaved();
     } catch (err) {
       console.error("Error al guardar la notita:", err);
@@ -79,6 +85,22 @@ export function EventForm({ defaultDate, onSaved }: { defaultDate: string; onSav
       </div>
 
       <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+      <div className="grid grid-cols-2 gap-3">
+        <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+        <select
+          value={reminder}
+          onChange={(e) => setReminder(e.target.value as ReminderOffset)}
+          className="rounded-xl border border-lavender-200 bg-white/80 px-3 py-2.5 text-sm"
+          aria-label="Avisarme antes del evento"
+        >
+          <option value="5m">Avisarme 5 min antes</option>
+          <option value="15m">Avisarme 15 min antes</option>
+          <option value="30m">Avisarme 30 min antes</option>
+          <option value="1h">Avisarme 1 hora antes</option>
+          <option value="1d">Avisarme 1 día antes</option>
+          <option value="none">Sin recordatorio</option>
+        </select>
+      </div>
       <Textarea placeholder="Detalles (opcional)" rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} />
       <Button onClick={save} className="self-end">Guardar en el calendario</Button>
     </div>

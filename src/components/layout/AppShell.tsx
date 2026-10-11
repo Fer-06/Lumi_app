@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { MobileNav } from "@/components/layout/MobileNav";
+import { ReminderScheduler } from "@/components/notifications/ReminderScheduler";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -11,6 +12,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen bg-transparent">
+      <ReminderScheduler />
       {!isAuthRoute && <Sidebar />}
       <div className="flex-1 pb-20 lg:pb-0">{children}</div>
       {!isAuthRoute && <MobileNav />}

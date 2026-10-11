@@ -16,8 +16,8 @@ PWA de productividad universitaria y bienestar personal construida con Next.js (
 - ✅ Asistente/chatbot motivador (motor de reglas local, listo para conectar una IA real)
 - ✅ Sección relax: Pomodoro, respiración guiada, sonidos ambientales
 - ✅ Objetivos por periodo (diaria/semanal/mensual/anual)
-- ✅ Ajustes de perfil y activación de notificaciones
-- ✅ Base de notificaciones push reales (Firebase Cloud Messaging)
+- ✅ Ajustes de perfil, temas de color y recordatorios del navegador para tareas y eventos del calendario
+- ✅ Recordatorios mientras Lumi está abierta; las notificaciones con la app cerrada requieren un backend de push
 - ✅ Configurado como PWA instalable (`next-pwa` + manifest)
 - ✅ Sistema de diseño con paleta pastel (lavanda, rosa, menta, azul bebé, crema) y estilo glassmorphism
 
@@ -25,7 +25,7 @@ PWA de productividad universitaria y bienestar personal construida con Next.js (
 
 1. **Tu proyecto de Firebase**: crea uno en https://console.firebase.google.com, activa Authentication (Email/Password), Firestore y Cloud Messaging.
 2. Copia `.env.example` a `.env.local` y completa las claves de tu proyecto Firebase.
-3. Reemplaza la config de ejemplo en `public/firebase-messaging-sw.js` con la de tu proyecto (los service workers no leen variables de entorno).
+3. Para añadir notificaciones push con la app cerrada, configura Firebase Cloud Messaging y el service worker con los datos de tu proyecto (los service workers no leen variables de entorno). Los recordatorios locales no requieren esa configuración.
 4. Agrega tus propios íconos en `public/icons/icon-192.png` y `icon-512.png`.
 5. Agrega archivos de audio libres de derechos en `public/sounds/` (rain.mp3, ocean.mp3, forest.mp3, night.mp3, fireplace.mp3) para la sección Relax.
 6. Configura las reglas de seguridad de Firestore (por ahora no están incluidas — usa reglas que exijan `request.auth.uid == resource.data.userId`).

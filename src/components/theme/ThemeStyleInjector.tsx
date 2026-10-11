@@ -2,15 +2,14 @@
 
 import { useEffect } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
-import { getTheme } from "@/lib/theme";
+import { applyTheme, DEFAULT_THEME_ID } from "@/lib/theme";
 
 export function ThemeStyleInjector() {
   const profile = useAuthStore((s) => s.profile);
 
   useEffect(() => {
-    const theme = getTheme(profile?.themeColor);
-    document.documentElement.style.setProperty("--accent-from", theme.from);
-    document.documentElement.style.setProperty("--accent-to", theme.to);
+    const savedTheme = window.localStorage.getItem("lumi-theme");
+    applyTheme(profile?.themeColor ?? savedTheme ?? DEFAULT_THEME_ID);
   }, [profile?.themeColor]);
 
   return null;

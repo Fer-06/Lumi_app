@@ -9,7 +9,7 @@ import { saveUserProfile, logoutUser } from "@/services/auth.service";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { THEME_OPTIONS } from "@/lib/theme";
+import { applyTheme, DEFAULT_THEME_ID, getTheme, THEME_OPTIONS } from "@/lib/theme";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -24,6 +24,8 @@ export default function SettingsPage() {
     if (profile?.name) {
       setName(profile.name);
     }
+    const savedTheme = window.localStorage.getItem("lumi-theme");
+    setThemeColor(profile?.themeColor ?? savedTheme ?? DEFAULT_THEME_ID);
   }, [profile]);
 
   const save = async () => {
@@ -42,25 +44,59 @@ export default function SettingsPage() {
   };
 
   const chooseTheme = async (id: string) => {
-  setThemeColor(id);
-  if (!profile) return;
-  try {
-    await saveUserProfile(profile.uid, { themeColor: id });
-  } catch (err) {
-    console.error("Error al guardar el color:", err);
-  }
+    const previousTheme = profile?.themeColor ?? window.localStorage.getItem("lumi-theme") ?? DEFAULT_THEME_ID;
+    setThemeColor(id);
+    window.localStorage.setItem("lumi-theme", id);
+    applyTheme(id);
+
+    if (!profile) return;
+
+    setProfile({ ...profile, themeColor: id });
+    try {
+      await saveUserProfile(profile.uid, { themeColor: id });
+      setMessage("Color actualizado.");
+    } catch {
+      setThemeColor(previousTheme);
+      window.localStorage.setItem("lumi-theme", previousTheme);
+      applyTheme(previousTheme);
+      setProfile({ ...profile, themeColor: previousTheme });
+      setMessage("No se pudo guardar el color. Intenta otra vez.");
+    }
   };
 
   const enableNotifications = async () => {
-    const token = await requestPermission();
-    if (profile && token) {
+    if (!profile) {
+      setMessage("Inicia sesión para activar los recordatorios.");
+      return;
+    }
+
+    try {
+      const permission = await requestPermission();
+      if (permission !== "granted") {
+        setMessage("Permite las notificaciones en tu navegador para recibir recordatorios.");
+        return;
+      }
+
       try {
         await saveUserProfile(profile.uid, { notificationsEnabled: true });
         setProfile({ ...profile, notificationsEnabled: true });
-        setMessage("Notificaciones activadas.");
+        setMessage("Recordatorios activados para tus tareas y eventos del calendario.");
       } catch {
-        setMessage("No se pudieron activar las notificaciones.");
+        setMessage("No se pudieron guardar los ajustes de notificaciones.");
       }
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "No se pudieron activar las notificaciones.");
+    }
+  };
+
+  const disableNotifications = async () => {
+    if (!profile) return;
+    try {
+      await saveUserProfile(profile.uid, { notificationsEnabled: false });
+      setProfile({ ...profile, notificationsEnabled: false });
+      setMessage("Recordatorios desactivados.");
+    } catch {
+      setMessage("No se pudieron desactivar los recordatorios.");
     }
   };
 
@@ -93,11 +129,16 @@ export default function SettingsPage() {
                 style={{ background: `linear-gradient(to bottom right, ${t.from}, ${t.to})` }}
                 title={t.label}
                 aria-label={t.label}
+                aria-pressed={themeColor === t.id}
               />
             ))}
           </div>
         <hr className="border-lavender-100" />
-        <Button variant="secondary" onClick={enableNotifications}>Activar notificaciones</Button>
+        {profile?.notificationsEnabled ? (
+          <Button variant="secondary" onClick={disableNotifications}>Desactivar recordatorios</Button>
+        ) : (
+          <Button variant="secondary" onClick={enableNotifications}>Activar recordatorios</Button>
+        )}
         <Button variant="ghost" onClick={handleLogout}>Cerrar sesión</Button>
       </Card>
     </div>

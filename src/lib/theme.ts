@@ -19,3 +19,11 @@ export const DEFAULT_THEME_ID = "lavanda-rosa";
 export function getTheme(id?: string): ThemeOption {
   return THEME_OPTIONS.find((t) => t.id === id) ?? THEME_OPTIONS[0];
 }
+
+export function applyTheme(id?: string) {
+  if (typeof document === "undefined") return;
+
+  const theme = getTheme(id);
+  document.documentElement.style.setProperty("--accent-from", theme.from);
+  document.documentElement.style.setProperty("--accent-to", theme.to);
+}

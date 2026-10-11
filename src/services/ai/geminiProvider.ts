@@ -25,6 +25,7 @@ export class GeminiAIProvider implements AIProvider {
         "Content-Type": "application/json",
         Authorization: `Bearer ${idToken}`,
       },
+      cache: "no-store",
       body: JSON.stringify({ message: userMessage, history, gender }),
     });
 

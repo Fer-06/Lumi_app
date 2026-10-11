@@ -51,6 +51,67 @@ function getFirebaseConfig() {
   });
 }
 
+function getGeminiFailure(error: unknown) {
+  const details = typeof error === "object" && error !== null
+    ? error as { statusCode?: unknown; status?: unknown; message?: unknown; name?: unknown }
+    : {};
+  const status = typeof details.statusCode === "number"
+    ? details.statusCode
+    : typeof details.status === "number"
+      ? details.status
+      : undefined;
+  const message = typeof details.message === "string" ? details.message.toLowerCase() : "";
+  const name = typeof details.name === "string" ? details.name : "UnknownError";
+
+  if (/api[_ ]key.{0,30}(invalid|not valid|expired)|invalid.{0,20}api[_ ]key/.test(message)) {
+    return {
+      status,
+      name,
+      error: "Gemini rechazó la clave API. Crea o copia una clave de Google AI Studio y guárdala como GEMINI_API_KEY en lumi/.env.local.",
+    };
+  }
+
+  if (status === 401 || status === 403) {
+    return {
+      status,
+      name,
+      error: "Google rechazó el acceso a Gemini. Revisa que la clave sea de Google AI Studio y que no tenga restricciones que bloqueen la API Gemini.",
+    };
+  }
+
+  if (status === 429) {
+    return {
+      status,
+      name,
+      error: "Se alcanzó el límite de uso de Gemini. Revisa la cuota y vuelve a intentarlo más tarde.",
+    };
+  }
+
+  if (status === 404 || /model.{0,30}(not found|not supported|does not exist)/.test(message)) {
+    return {
+      status,
+      name,
+      error: "El modelo de Gemini configurado no está disponible para esta clave. Revisa el acceso al modelo gemini-2.5-flash.",
+    };
+  }
+
+  if (name === "APIConnectionError") {
+    return {
+      status,
+      name,
+      error: "No se pudo conectar con Gemini. Comprueba tu conexión y vuelve a intentarlo.",
+    };
+  }
+
+  return {
+    status,
+    name,
+    error: status === undefined
+      ? "Gemini no pudo procesar la solicitud. Comprueba la configuración de la clave y vuelve a intentarlo."
+      : `Gemini rechazó la solicitud (HTTP ${status}). Revisa la configuración de la clave y el acceso a la API.`,
+  };
+}
+
 async function verifyFirebaseToken(idToken: string, apiKey: string) {
   const response = await fetch(
     `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${encodeURIComponent(apiKey)}`,
@@ -163,9 +224,13 @@ export async function POST(request: NextRequest) {
       reply: adaptGenderedText(reply, parsed.data.gender),
     });
   } catch (error) {
-    console.error("Falló la solicitud a Gemini:", error);
+    const failure = getGeminiFailure(error);
+    console.error("Falló la solicitud a Gemini:", {
+      status: failure.status,
+      errorType: failure.name,
+    });
     return NextResponse.json(
-      { error: "No se pudo conectar con Gemini. Revisa la clave API y vuelve a intentarlo." },
+      { error: failure.error },
       { status: 502 },
     );
   }

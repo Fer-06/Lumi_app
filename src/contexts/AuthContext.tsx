@@ -6,6 +6,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { getUserProfile } from "@/services/auth.service";
 import { useAuthStore } from "@/store/useAuthStore";
+import { UserProfile } from "@/types";
 
 const AuthContext = createContext(null);
 
@@ -15,26 +16,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
-      if (user) {
+      try {
+        if (!user) {
+          setProfile(null);
+          return;
+        }
+
         let profile = await getUserProfile(user.uid);
 
         if (!profile) {
-          profile = {
+          const newProfile: UserProfile = {
             uid: user.uid,
             name: user.displayName ?? "",
             email: user.email ?? "",
             notificationsEnabled: false,
             language: "es",
           };
-          await setDoc(doc(db, "users", user.uid), profile, { merge: true });
+          await setDoc(doc(db, "users", user.uid), newProfile, { merge: true });
+          profile = newProfile;
         }
 
         setProfile(profile);
-      } else {
-        setProfile(null);
+      } catch (error) {
+        console.error("No se pudo sincronizar el perfil de la cuenta:", error);
+        if (user) {
+          setProfile({
+            uid: user.uid,
+            name: user.displayName ?? "",
+            email: user.email ?? "",
+            notificationsEnabled: false,
+            language: "es",
+          });
+        }
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     });
 
     return () => unsub();

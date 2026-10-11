@@ -172,14 +172,11 @@ export function Mascot() {
               <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
               <stop offset="100%" stopColor="#FFF4F8" stopOpacity="0.76" />
             </linearGradient>
-            <filter id="mascotShadow" x="2" y="5" width="72" height="70" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-              <feDropShadow dx="0" dy="3" stdDeviation="3" floodColor="#7550D6" floodOpacity="0.16" />
-            </filter>
           </defs>
 
           <ellipse cx="38" cy="67" rx="19" ry="5" fill="var(--accent-from, #C2AEFF)" opacity="0.22" />
 
-          <g filter="url(#mascotShadow)">
+          <g>
             <path d="M17 33 11 28q-2-2 0-4l8-3M59 33l6-5q2-2 0-4l-8-3" fill="url(#mascotGradient)" stroke="#FFFFFF" strokeOpacity=".7" strokeWidth="2" strokeLinejoin="round" />
             <circle cx="22" cy="18" r="9" fill="url(#mascotGradient)" stroke="#FFFFFF" strokeOpacity=".75" strokeWidth="2" />
             <circle cx="54" cy="18" r="9" fill="url(#mascotGradient)" stroke="#FFFFFF" strokeOpacity=".75" strokeWidth="2" />

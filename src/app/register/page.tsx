@@ -7,7 +7,7 @@ import { Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { registerUser } from "@/services/auth.service";
+import { getRegistrationErrorMessage, registerUser } from "@/services/auth.service";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -15,14 +15,22 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setError("");
+    setIsSubmitting(true);
+
     try {
       await registerUser(name, email, password);
       router.push("/");
-    } catch {
-      setError("No pudimos crear tu cuenta. Intenta nuevamente.");
+    } catch (err) {
+      console.error("Error al crear la cuenta:", err);
+      setError(getRegistrationErrorMessage(err));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -42,10 +50,12 @@ export default function RegisterPage() {
 
         <form onSubmit={onSubmit} className="flex flex-col gap-3">
           <Input placeholder="Tu nombre" value={name} onChange={(e) => setName(e.target.value)} required />
-          <Input type="email" placeholder="Correo" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <Input type="email" placeholder="Correo Gmail o institucional" value={email} onChange={(e) => setEmail(e.target.value)} required />
           <Input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
-          {error && <p className="text-xs text-blush-500">{error}</p>}
-          <Button type="submit">Crear cuenta</Button>
+          {error && <p className="rounded-lg bg-blush-50 px-3 py-2 text-xs text-blush-500" role="alert">{error}</p>}
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Creando cuenta..." : "Crear cuenta"}
+          </Button>
         </form>
 
         <p className="mt-4 text-center text-sm text-gray-400">

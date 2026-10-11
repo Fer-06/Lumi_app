@@ -57,18 +57,18 @@ export function applyTheme(id?: string) {
   root.style.setProperty("--accent-rgb", asCssRgb(from));
 
   const lavenderShades: Record<number, [number, number, number]> = {
-    50: tint(from, 0.95),
-    100: tint(from, 0.9),
-    200: tint(from, 0.78),
+    50: tint(from, 0.86),
+    100: tint(from, 0.76),
+    200: tint(from, 0.58),
     300: from,
     400: shade(from, 0.1),
     500: shade(from, 0.25),
     600: shade(from, 0.4),
   };
   const blushShades: Record<number, [number, number, number]> = {
-    50: tint(to, 0.95),
-    100: tint(to, 0.87),
-    200: tint(to, 0.68),
+    50: tint(to, 0.86),
+    100: tint(to, 0.74),
+    200: tint(to, 0.56),
     300: to,
     400: shade(to, 0.12),
     500: shade(to, 0.24),

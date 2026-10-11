@@ -6,21 +6,21 @@ const config: Config = {
     extend: {
       colors: {
         lavender: {
-          50: "#F5F3FF",
-          100: "#EDE7FF",
-          200: "#D9CCFF",
-          300: "#C2AEFF",
-          400: "#A98AFA",
-          500: "#8F6AF0",
-          600: "#7550D6",
+          50: "rgb(var(--lavender-50) / <alpha-value>)",
+          100: "rgb(var(--lavender-100) / <alpha-value>)",
+          200: "rgb(var(--lavender-200) / <alpha-value>)",
+          300: "rgb(var(--lavender-300) / <alpha-value>)",
+          400: "rgb(var(--lavender-400) / <alpha-value>)",
+          500: "rgb(var(--lavender-500) / <alpha-value>)",
+          600: "rgb(var(--lavender-600) / <alpha-value>)",
         },
         blush: {
-          50: "#FFF4F8",
-          100: "#FFE4EF",
-          200: "#FFC9DE",
-          300: "#FFA9CB",
-          400: "#FF87B6",
-          500: "#F76BA0",
+          50: "rgb(var(--blush-50) / <alpha-value>)",
+          100: "rgb(var(--blush-100) / <alpha-value>)",
+          200: "rgb(var(--blush-200) / <alpha-value>)",
+          300: "rgb(var(--blush-300) / <alpha-value>)",
+          400: "rgb(var(--blush-400) / <alpha-value>)",
+          500: "rgb(var(--blush-500) / <alpha-value>)",
         },
         mint: {
           50: "#F0FBF6",
@@ -49,8 +49,8 @@ const config: Config = {
         display: ["var(--font-display)"],
       },
       boxShadow: {
-        soft: "0 8px 30px rgba(143, 106, 240, 0.12)",
-        glass: "0 8px 32px rgba(143, 106, 240, 0.15)",
+        soft: "0 8px 30px rgb(var(--accent-rgb) / 0.12)",
+        glass: "0 8px 32px rgb(var(--accent-rgb) / 0.15)",
       },
       backdropBlur: {
         glass: "16px",

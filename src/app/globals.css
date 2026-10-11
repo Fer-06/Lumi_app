@@ -8,16 +8,30 @@
 }
 
 body {
-  background: linear-gradient(180deg, #FFF9EE 0%, #F5F3FF 40%, #FFF4F8 100%);
+  background: linear-gradient(180deg, #FFF9EE 0%, rgb(var(--lavender-50)) 40%, rgb(var(--blush-50)) 100%);
   min-height: 100vh;
 }
 
 ::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-thumb { background: #D9CCFF; border-radius: 999px; }
+::-webkit-scrollbar-thumb { background: rgb(var(--lavender-200)); border-radius: 999px; }
 
 :root {
   --accent-from: #C2AEFF;
   --accent-to: #FFA9CB;
+  --accent-rgb: 194 174 255;
+  --lavender-50: 245 243 255;
+  --lavender-100: 237 231 255;
+  --lavender-200: 217 204 255;
+  --lavender-300: 194 174 255;
+  --lavender-400: 169 138 250;
+  --lavender-500: 143 106 240;
+  --lavender-600: 117 80 214;
+  --blush-50: 255 244 248;
+  --blush-100: 255 228 239;
+  --blush-200: 255 201 222;
+  --blush-300: 255 169 203;
+  --blush-400: 255 135 182;
+  --blush-500: 247 107 160;
 }
 
 .bg-accent-gradient {

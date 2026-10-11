@@ -25,7 +25,7 @@ PWA de productividad universitaria y bienestar personal construida con Next.js (
 
 1. **Tu proyecto de Firebase**: crea uno en https://console.firebase.google.com, activa Authentication (Email/Password), Firestore y Cloud Messaging.
 2. Copia `.env.example` a `.env.local` y completa las claves de tu proyecto Firebase.
-3. Agrega `GEMINI_API_KEY` a `.env.local` para habilitar el asistente. Mantén esta clave sin el prefijo `NEXT_PUBLIC_`; la llamada a Gemini pasa por una ruta del servidor.
+3. Agrega `GEMINI_API_KEY` a `.env.local` para habilitar el asistente. Mantén esta clave sin el prefijo `NEXT_PUBLIC_` para que no se exponga al navegador; la llamada a Gemini pasa por una ruta del servidor. Si antes usabas `NEXT_PUBLIC_GEMINI_API_KEY`, puedes migrar su valor a `GEMINI_API_KEY` y quitar la variable pública.
 4. Para añadir notificaciones push con la app cerrada, configura Firebase Cloud Messaging y el service worker con los datos de tu proyecto (los service workers no leen variables de entorno). Los recordatorios locales no requieren esa configuración.
 5. Agrega tus propios íconos en `public/icons/icon-192.png` y `icon-512.png`.
 6. Agrega archivos de audio libres de derechos en `public/sounds/` (rain.mp3, ocean.mp3, forest.mp3, night.mp3, fireplace.mp3) para la sección Relax.

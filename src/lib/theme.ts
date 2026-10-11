@@ -16,6 +16,10 @@ export const THEME_OPTIONS: ThemeOption[] = [
 
 export const DEFAULT_THEME_ID = "lavanda-rosa";
 
+export function getThemeOverrideKey(uid?: string) {
+  return uid ? `lumi-theme-pending:${uid}` : "lumi-theme";
+}
+
 export function getTheme(id?: string): ThemeOption {
   return THEME_OPTIONS.find((t) => t.id === id) ?? THEME_OPTIONS[0];
 }

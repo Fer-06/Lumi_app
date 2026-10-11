@@ -2,15 +2,18 @@
 
 import { useEffect } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
-import { applyTheme, DEFAULT_THEME_ID } from "@/lib/theme";
+import { applyTheme, DEFAULT_THEME_ID, getThemeOverrideKey } from "@/lib/theme";
 
 export function ThemeStyleInjector() {
   const profile = useAuthStore((s) => s.profile);
+  const uid = profile?.uid;
+  const themeColor = profile?.themeColor;
 
   useEffect(() => {
-    const savedTheme = window.localStorage.getItem("lumi-theme");
-    applyTheme(profile?.themeColor ?? savedTheme ?? DEFAULT_THEME_ID);
-  }, [profile?.themeColor]);
+    const override = window.localStorage.getItem(getThemeOverrideKey(uid));
+    const guestTheme = uid ? null : window.localStorage.getItem("lumi-theme");
+    applyTheme(override ?? guestTheme ?? themeColor ?? DEFAULT_THEME_ID);
+  }, [uid, themeColor]);
 
   return null;
 }

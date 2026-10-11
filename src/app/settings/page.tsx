@@ -9,11 +9,12 @@ import { saveUserProfile, logoutUser } from "@/services/auth.service";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { applyTheme, DEFAULT_THEME_ID, getTheme, THEME_OPTIONS } from "@/lib/theme";
+import { applyTheme, DEFAULT_THEME_ID, getThemeOverrideKey, THEME_OPTIONS } from "@/lib/theme";
 
 export default function SettingsPage() {
   const router = useRouter();
   const profile = useAuthStore((s) => s.profile);
+  const loading = useAuthStore((s) => s.loading);
   const setProfile = useAuthStore((s) => s.setProfile);
   const { requestPermission } = useNotifications();
   const [name, setName] = useState(profile?.name ?? "");
@@ -24,8 +25,9 @@ export default function SettingsPage() {
     if (profile?.name) {
       setName(profile.name);
     }
-    const savedTheme = window.localStorage.getItem("lumi-theme");
-    setThemeColor(profile?.themeColor ?? savedTheme ?? DEFAULT_THEME_ID);
+    const override = window.localStorage.getItem(getThemeOverrideKey(profile?.uid));
+    const guestTheme = profile ? null : window.localStorage.getItem("lumi-theme");
+    setThemeColor(override ?? guestTheme ?? profile?.themeColor ?? DEFAULT_THEME_ID);
   }, [profile]);
 
   const save = async () => {
@@ -44,9 +46,9 @@ export default function SettingsPage() {
   };
 
   const chooseTheme = async (id: string) => {
-    const previousTheme = profile?.themeColor ?? window.localStorage.getItem("lumi-theme") ?? DEFAULT_THEME_ID;
+    const overrideKey = getThemeOverrideKey(profile?.uid);
     setThemeColor(id);
-    window.localStorage.setItem("lumi-theme", id);
+    window.localStorage.setItem(overrideKey, id);
     applyTheme(id);
 
     if (!profile) return;
@@ -54,13 +56,10 @@ export default function SettingsPage() {
     setProfile({ ...profile, themeColor: id });
     try {
       await saveUserProfile(profile.uid, { themeColor: id });
-      setMessage("Color actualizado.");
+      window.localStorage.removeItem(overrideKey);
+      setMessage("Color actualizado y guardado.");
     } catch {
-      setThemeColor(previousTheme);
-      window.localStorage.setItem("lumi-theme", previousTheme);
-      applyTheme(previousTheme);
-      setProfile({ ...profile, themeColor: previousTheme });
-      setMessage("No se pudo guardar el color. Intenta otra vez.");
+      setMessage("El color quedó aplicado en este dispositivo, pero no se pudo sincronizar con tu cuenta.");
     }
   };
 
@@ -124,8 +123,10 @@ export default function SettingsPage() {
             {THEME_OPTIONS.map((t) => (
               <button
                 key={t.id}
+                type="button"
+                disabled={loading}
                 onClick={() => chooseTheme(t.id)}
-                className={`h-10 w-10 rounded-full border-2 transition ${themeColor === t.id ? "border-gray-700 scale-110" : "border-white"}`}
+                className={`h-10 w-10 rounded-full border-2 transition disabled:cursor-wait ${themeColor === t.id ? "border-gray-700 scale-110" : "border-white"}`}
                 style={{ background: `linear-gradient(to bottom right, ${t.from}, ${t.to})` }}
                 title={t.label}
                 aria-label={t.label}

@@ -8,20 +8,38 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { loginUser } from "@/services/auth.service";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function LoginPage() {
   const router = useRouter();
+  const setProfile = useAuthStore((state) => state.setProfile);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setError("");
+    setIsSubmitting(true);
+
     try {
-      await loginUser(email, password);
-      router.push("/");
-    } catch {
+      const credential = await loginUser(email.trim(), password);
+      const user = credential.user;
+      setProfile({
+        uid: user.uid,
+        name: user.displayName ?? "",
+        email: user.email ?? email.trim(),
+        gender: "neutral",
+        notificationsEnabled: false,
+        language: "es",
+      });
+      router.replace("/");
+    } catch (loginError) {
+      console.error("No se pudo iniciar sesión:", loginError);
       setError("No pudimos iniciar sesión. Revisa tus datos.");
+      setIsSubmitting(false);
     }
   };
 
@@ -40,10 +58,12 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={onSubmit} className="flex flex-col gap-3">
-          <Input type="email" placeholder="Correo" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <Input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          {error && <p className="text-xs text-blush-500">{error}</p>}
-          <Button type="submit">Iniciar sesión</Button>
+          <Input type="email" placeholder="Correo" value={email} onChange={(e) => setEmail(e.target.value)} required disabled={isSubmitting} />
+          <Input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required disabled={isSubmitting} />
+          {error && <p className="text-xs text-blush-500" role="alert">{error}</p>}
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Iniciando sesión..." : "Iniciar sesión"}
+          </Button>
         </form>
 
         <p className="mt-4 text-center text-sm text-gray-400">

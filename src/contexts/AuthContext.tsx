@@ -16,6 +16,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
+      setLoading(true);
       try {
         if (!user) {
           setProfile(null);

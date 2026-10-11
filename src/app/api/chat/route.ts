@@ -1,6 +1,7 @@
 import { GoogleGenAI, Part } from "@google/genai";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { adaptGenderedText } from "@/lib/gender";
 
 export const runtime = "nodejs";
 
@@ -134,7 +135,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Lumi no pudo preparar una respuesta. Inténtalo otra vez." }, { status: 502 });
     }
 
-    return NextResponse.json({ reply });
+    return NextResponse.json({
+      reply: adaptGenderedText(reply, parsed.data.gender),
+    });
   } catch (error) {
     console.error("Falló la solicitud a Gemini:", error);
     return NextResponse.json(

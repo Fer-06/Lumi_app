@@ -1,4 +1,5 @@
 import { Gender } from "@/types";
+import { adaptGenderedText } from "@/lib/gender";
 import { AIProvider } from "./aiProvider";
 
 type ConversationMessage = { role: "user" | "assistant"; text: string };
@@ -124,6 +125,9 @@ export class LocalAIProvider implements AIProvider {
     const topic = detectTopic(normalized);
 
     await new Promise((resolve) => setTimeout(resolve, 450));
-    return replyFor(topic, gender, seed, userMessage, previousAssistantMessage);
+    return adaptGenderedText(
+      replyFor(topic, gender, seed, userMessage, previousAssistantMessage),
+      gender,
+    );
   }
 }

@@ -1,6 +1,7 @@
 node_modules
 .next
 out
+serviceAccountKey.json
 .env
 .env.local
 *.log

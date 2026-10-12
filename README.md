@@ -13,7 +13,8 @@ PWA de productividad universitaria y bienestar personal construida con Next.js (
 - ✅ Módulo universidad (cursos y profesores)
 - ✅ Diario personal con estado de ánimo
 - ✅ Notas rápidas estilo Google Keep (con anclado y colores)
-- ✅ Asistente/chatbot motivador (motor de reglas local, listo para conectar una IA real)
+- ✅ Asistente con Gemini e historial de conversaciones por cuenta
+- ✅ Navegación móvil con acceso a todas las secciones desde el menú «Más»
 - ✅ Sección relax: Pomodoro, respiración guiada, sonidos ambientales
 - ✅ Objetivos por periodo (diaria/semanal/mensual/anual)
 - ✅ Ajustes de perfil, temas de color y recordatorios del navegador para tareas y eventos del calendario
@@ -29,7 +30,7 @@ PWA de productividad universitaria y bienestar personal construida con Next.js (
 4. Para añadir notificaciones push con la app cerrada, configura Firebase Cloud Messaging y el service worker con los datos de tu proyecto (los service workers no leen variables de entorno). Los recordatorios locales no requieren esa configuración.
 5. Agrega tus propios íconos en `public/icons/icon-192.png` y `icon-512.png`.
 6. Agrega archivos de audio libres de derechos en `public/sounds/` (rain.mp3, ocean.mp3, forest.mp3, night.mp3, fireplace.mp3) para la sección Relax.
-7. Configura las reglas de seguridad de Firestore (por ahora no están incluidas — usa reglas que exijan `request.auth.uid == resource.data.userId`).
+7. Publica en Firebase Console las reglas incluidas en [`../firestore.rules`](../firestore.rules). Estas protegen cada registro con su propietario (`userId` o el UID del perfil) y permiten guardar el historial en `chatConversations` y `chatMessages`; no dejes activas reglas temporales abiertas.
 
 ## Instalación local
 

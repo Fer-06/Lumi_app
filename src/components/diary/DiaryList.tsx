@@ -26,8 +26,8 @@ export function DiaryList({ entries }: { entries: DiaryEntry[] }) {
     <div className="flex flex-col gap-3">
       {entries.map((entry) => (
         <Card key={entry.id}>
-          <div className="flex items-center justify-between mb-1">
-            <p className="font-display text-gray-700">{entry.emoji} {entry.title}</p>
+          <div className="mb-1 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+            <p className="break-words font-display text-gray-700">{entry.emoji} {entry.title}</p>
             <div className="flex items-center gap-3">
               <span className="text-xs text-gray-400">
                 {format(parseISO(entry.date), "d MMM yyyy", { locale: es })}

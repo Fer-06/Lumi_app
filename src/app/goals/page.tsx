@@ -37,7 +37,7 @@ export default function GoalsPage() {
       <Header />
       <Card className="mb-4 flex flex-col gap-3">
         <Input placeholder="Nueva meta..." value={title} onChange={(e) => setTitle(e.target.value)} />
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
           <Tabs
             value={period}
             onChange={(v) => setPeriod(v as GoalPeriod)}

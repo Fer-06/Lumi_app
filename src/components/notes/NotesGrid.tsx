@@ -30,14 +30,20 @@ export function NotesGrid({ notes }: { notes: QuickNote[] }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex gap-2">
-        <Textarea placeholder="Escribe una nota rápida..." rows={2} value={draft} onChange={(e) => setDraft(e.target.value)} />
-        <Button onClick={addNote}>Añadir</Button>
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <Textarea
+          placeholder="Escribe una nota rápida..."
+          rows={2}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          className="min-w-0"
+        />
+        <Button onClick={addNote} className="shrink-0 self-end sm:self-auto">Añadir</Button>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {sorted.map((note) => (
           <div key={note.id} className="rounded-xl2 p-4 shadow-soft" style={{ backgroundColor: note.color }}>
-            <p className="text-sm text-gray-700 whitespace-pre-line">{note.text}</p>
+            <p className="break-words whitespace-pre-line text-sm text-gray-700">{note.text}</p>
             <div className="mt-3 flex justify-end gap-2">
               <button onClick={() => updateNote(note.id, { pinned: !note.pinned })}>
                 <Pin size={14} className={note.pinned ? "text-lavender-600" : "text-gray-400"} />

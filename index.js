@@ -29,7 +29,7 @@ db.collection('mensajes').onSnapshot((snapshot) => {
           console.log(`Procesando prompt: "${docData.texto}"...`);
 
           const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.1-flash-lite',
             contents: docData.texto,
             config: {
               systemInstruction: 'Eres un asistente virtual útil, conciso y amable.'

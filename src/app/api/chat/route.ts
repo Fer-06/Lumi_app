@@ -8,6 +8,8 @@ import { adaptGenderedText } from "@/lib/gender";
 
 export const runtime = "nodejs";
 
+const GEMINI_MODEL = "gemini-3.1-flash-lite";
+
 const requestSchema = z.object({
   message: z.string().trim().min(1).max(4000),
   history: z.array(z.object({
@@ -36,14 +38,12 @@ function loadProjectEnv() {
 }
 
 function getGeminiApiKey() {
-  loadProjectEnv();
   return (
-    process.env.GEMINI_API_KEY?.trim()
-    || process.env["NEXT_PUBLIC_GEMINI_API_KEY"]?.trim()
-    || process.env.GOOGLE_API_KEY?.trim()
+    process.env.GEMINI_API_KEY?.trim() ||
+    process.env.NEXT_PUBLIC_GEMINI_API_KEY?.trim() ||
+    process.env.GOOGLE_API_KEY?.trim()
   );
 }
-
 function getFirebaseConfig() {
   return firebaseConfigSchema.safeParse({
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -87,11 +87,19 @@ function getGeminiFailure(error: unknown) {
     };
   }
 
+  if (status === 503) {
+    return {
+      status,
+      name,
+      error: "Gemini no está disponible temporalmente. Espera un momento y vuelve a intentarlo.",
+    };
+  }
+
   if (status === 404 || /model.{0,30}(not found|not supported|does not exist)/.test(message)) {
     return {
       status,
       name,
-      error: "El modelo de Gemini configurado no está disponible para esta clave. Revisa el acceso al modelo gemini-2.5-flash.",
+      error: `El modelo de Gemini configurado (${GEMINI_MODEL}) no está disponible para esta clave.`,
     };
   }
 
@@ -205,7 +213,7 @@ export async function POST(request: NextRequest) {
   try {
     const gemini = new GoogleGenAI({ apiKey });
     const result = await gemini.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: GEMINI_MODEL,
       contents,
       config: {
         systemInstruction: systemInstruction(parsed.data.gender),

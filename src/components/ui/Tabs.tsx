@@ -12,7 +12,7 @@ export function Tabs({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="inline-flex rounded-2xl bg-lavender-50 p-1">
+    <div className="inline-flex max-w-full flex-wrap gap-1 rounded-2xl bg-lavender-50 p-1">
       {options.map((opt) => (
         <button
           key={opt.value}
